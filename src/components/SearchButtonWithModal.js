@@ -25,10 +25,10 @@ class SearchButtonWithModal extends React.Component {
     }
 
     render() {
-        const {searchText, modalToggle, style} = this.props;
+        const {searchText, modalToggle, style, iconStyle} = this.props;
         return (
-            <Button transparent>
-                <Icon name='magnify' style={style}
+            <Button transparent style={style}>
+                <Icon name='magnify' style={iconStyle}
                     onPress={this.handleOpenModal} />
                 <Modal animationType='none' transparent={true} visible={modalToggle}
                     onRequestClose={() => {}}>
