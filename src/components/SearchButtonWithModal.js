@@ -33,7 +33,7 @@ class SearchButtonWithModal extends React.Component {
                 <Modal animationType='none' transparent={true} visible={modalToggle}
                     onRequestClose={() => {}}>
                     <Container style={{backgroundColor: appColors.mask}}>
-                        <Header searchBar rounded>
+                        <Header searchBar rounded style={styles.header}>
                             <Item style={{backgroundColor: 'white'}}>
                                 <Icon name='magnify' />
                                 <Input autoFocus placeholder='Search'
@@ -63,6 +63,13 @@ class SearchButtonWithModal extends React.Component {
         this.props.dispatch(toggleSearchModal());
     }
 }
+
+const styles = {
+    header: {
+        backgroundColor: 'transparent',
+        borderBottomWidth: 0
+    }
+};
 
 export default connect(state => ({
     searchText: state.search.searchText,
