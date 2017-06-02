@@ -54,7 +54,7 @@ class PostList extends React.Component {
     }
 
     render() {
-        const {listingPosts, hasMorePosts, posts} = this.props;
+        const {listingPosts, hasMorePosts, posts, scrollProps} = this.props;
         return (
             <ListView
                 refreshControl={
@@ -73,6 +73,8 @@ class PostList extends React.Component {
                 }}
                 onLoadMoreAsync={this.handleLoadMore}
                 style={{backgroundColor: '#fff'}}
+                ref={(el) => this.listEl = el}
+                {...scrollProps}
             />
         );
     }

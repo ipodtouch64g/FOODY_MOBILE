@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {View, TouchableWithoutFeedback} from 'react-native';
-import InfiniteScrollView from 'react-native-infinite-scroll-view';
+import {View, TouchableWithoutFeedback, Image} from 'react-native';
 
-import {Icon, Fab, Button, Toast} from 'native-base';
+import {Container, Icon, Fab, Button, Toast} from 'native-base';
 import appColors from '../styles/colors';
 import appMetrics from '../styles/metrics';
 import {getMoodIcon} from '../utilities/weather.js';
-import NavigationContainer from './NavigationContainer';
+import ParallaxNavigationContainer from './ParallaxNavigationContainer';
 import PostList from './PostList';
 import PostItem from './PostItem';
+import WeatherDisplay from './WeatherDisplay';
 
 import {connect} from 'react-redux';
 import {selectMood} from '../states/post-actions';
@@ -48,8 +48,13 @@ class TodayScreen extends React.Component {
     render() {
         const {navigate} = this.props.navigation;
         return (
-            <NavigationContainer navigate={navigate} title='Today'>
-                <PostList />
+            <ParallaxNavigationContainer
+                navigate={navigate}
+                title='Today'
+                titleLeft={80}
+                titleTop={40}
+                headerContentView={<WeatherDisplay />}
+                scrollViewClass={PostList}>
                 {this.state.fabActive &&
                     <TouchableWithoutFeedback onPress={this.handleFabClose}>
                         <View style={styles.fabMask}/>
@@ -98,7 +103,7 @@ class TodayScreen extends React.Component {
                         {getMoodIcon({group: 'Clear', style: styles.moodIcon})}
                     </Button>
                 </Fab>
-            </NavigationContainer>
+            </ParallaxNavigationContainer>
         );
     }
 

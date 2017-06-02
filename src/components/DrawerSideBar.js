@@ -28,6 +28,12 @@ export default class DrawerSideBar extends React.Component {
                 <Icon name='tag-multiple' style={styles.icon} />
                 <Text style={styles.text}>Forecast</Text>
             </Button>
+            <Button block transparent style={styles.item}>
+                <Icon name='settings' style={styles.icon}
+                    onPress={() => {}} // TODO
+                />
+                <Text style={styles.text}>Settings</Text>
+            </Button>
         </Container>
     );
     }
