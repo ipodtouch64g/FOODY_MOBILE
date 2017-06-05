@@ -297,7 +297,7 @@ export default {
 
   get darkenHeader() {
     // return color(this.tabBgColor).darken(0.03).hexString();
-    return color(this.tabBgColor).darken(0.03).hsl().string();
+    return color(this.tabBgColor).darken(0.03).hsl().string(); // app
   },
 
   dropdownBg: '#000',
