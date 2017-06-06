@@ -21,7 +21,8 @@ class PostList extends React.Component {
         ]),
         posts: PropTypes.array.isRequired,
         hasMorePosts: PropTypes.bool.isRequired,
-        dispatch: PropTypes.func.isRequired
+        dispatch: PropTypes.func.isRequired,
+        scrollProps: PropTypes.object
     };
 
     constructor(props) {

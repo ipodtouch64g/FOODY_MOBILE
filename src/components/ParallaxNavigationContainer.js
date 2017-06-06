@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {StatusBar, StyleSheet, Text, View, Platform, Animated} from 'react-native';
 
 import {Container, Header, Button, Icon, Drawer} from 'native-base';
@@ -9,6 +10,15 @@ import appColors from '../styles/colors';
 import appMetrics from '../styles/metrics';
 
 export default class ParallaxNavigationContainer extends React.Component {
+    static propTypes = {
+        navigate: PropTypes.func.isRequired,
+        title: PropTypes.string.isRequired,
+        titleLeft: PropTypes.number.isRequired,
+        titleTop: PropTypes.number.isRequired,
+        renderHeaderContent: PropTypes.func.isRequired,
+        renderScroller: PropTypes.func.isRequired
+    };
+
     constructor(props) {
         super(props);
 
@@ -21,7 +31,8 @@ export default class ParallaxNavigationContainer extends React.Component {
     }
 
     render() {
-        const {title, titleLeft, titleTop, navigate, headerContentView, scrollViewClass} = this.props;
+        const {title, titleLeft, titleTop, navigate,
+            renderHeaderContent, renderScroller} = this.props;
         const scrollY = this.scrollY;
         const {
             parallaxHeaderScrollDistance: dist,
@@ -98,12 +109,9 @@ export default class ParallaxNavigationContainer extends React.Component {
                             ]
                         }
                     ]}>{
-                        React.createElement(scrollViewClass, {
-                            ref: el => this.scrollView,
-                            scrollProps: {
-                                scrollEventThrottle: 16,
-                                onScroll: this.handleScroll
-                            }
+                        renderScroller({
+                            scrollEventThrottle: 16,
+                            onScroll: this.handleScroll
                         })
                     }</Animated.View>
 
@@ -134,7 +142,7 @@ export default class ParallaxNavigationContainer extends React.Component {
                                         }
                                     ]
                                 }
-                            ]}>{headerContentView}</Animated.View>
+                            ]}>{renderHeaderContent({})}</Animated.View>
                         </Animated.Image>
                     </Animated.View>
                     <View style={styles.bar}>

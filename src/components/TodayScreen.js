@@ -53,8 +53,8 @@ class TodayScreen extends React.Component {
                 title='Today'
                 titleLeft={80}
                 titleTop={40}
-                headerContentView={<WeatherDisplay />}
-                scrollViewClass={PostList}>
+                renderHeaderContent={props => <WeatherDisplay {...props} />}
+                renderScroller={props => <PostList scrollProps={props} />}>
                 {this.state.fabActive &&
                     <TouchableWithoutFeedback onPress={this.handleFabClose}>
                         <View style={styles.fabMask}/>
