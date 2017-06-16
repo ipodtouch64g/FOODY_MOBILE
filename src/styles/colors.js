@@ -1,5 +1,5 @@
 export default appColors = {
-    primary: '#31b0d5',
+    primary: '#6F4E37',
     primaryBorder: '#2aabd2',
     primaryText: '#fff',
     primaryLight: '#d9edf7',

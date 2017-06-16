@@ -17,8 +17,9 @@ import {StackNavigator, NavigationActions, addNavigationHelpers} from 'react-nav
 import TodayScreen from './components/TodayScreen';
 import PostFormScreen from './components/PostFormScreen';
 import ForecastScreen from './components/ForecastScreen';
-
+import Tab from './components/Tab';
 const AppNavigator = StackNavigator({
+
     Today: {screen: TodayScreen},
     Forecast: {screen: ForecastScreen},
     PostForm: {screen: PostFormScreen}
@@ -34,6 +35,7 @@ class AppWithStyleAndNavigator extends React.Component {
                     dispatch: this.props.dispatch,
                     state: this.props.nav
                 })}/>
+                <Tab></Tab>
             </StyleProvider>
         );
     }

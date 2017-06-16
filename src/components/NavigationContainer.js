@@ -21,27 +21,16 @@ export default class NavigationContainer extends React.Component {
     render() {
         const {title, navigate} = this.props;
         return (
-            <Drawer
-                ref={(el) => this.drawer = el}
-                content={<DrawerSideBar navigate={navigate} />}
-                onClose={this.closeDrawer}
-                tweenHandler={(ratio) => ({
-                    mainOverlay: {
-                        opacity: ratio,
-                        backgroundColor: appColors.mask
-                    }
-                })}>
+
                 <Container>
                     <Header>
-                        <Left><Button transparent onPress={this.openDrawer}>
-                            <Icon name='menu' />
-                        </Button></Left>
+
                         <Body><Title>{title}</Title></Body>
-                        <Right><SearchButtonWithModal /></Right>
                     </Header>
+                    <SearchButtonWithModal/>
                     {this.props.children}
                 </Container>
-            </Drawer>
+            
         );
     }
 
