@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import {View,StyleSheet} from 'react-native';
 import {Container, Header, Button, Icon, Left, Right, Body, Title, Drawer} from 'native-base';
-import SearchButtonWithModal from './SearchButtonWithModal';
-import DrawerSideBar from './DrawerSideBar';
 
+import DrawerSideBar from './DrawerSideBar';
 export default class NavigationContainer extends React.Component {
     static propTypes = {
         navigate: PropTypes.func.isRequired,
@@ -22,15 +21,16 @@ export default class NavigationContainer extends React.Component {
         const {title, navigate} = this.props;
         return (
 
-                <Container>
-                    <Header>
+                <Container style={{...StyleSheet.absoluteFillObject,height:200}}>
 
-                        <Body><Title>{title}</Title></Body>
-                    </Header>
-                    <SearchButtonWithModal/>
-                    {this.props.children}
+
+
+                      {this.props.children}
+
+
+
                 </Container>
-            
+
         );
     }
 
@@ -42,3 +42,9 @@ export default class NavigationContainer extends React.Component {
         this.drawer._root.close();
     }
 }
+const styles = {
+    Tab: {
+        position: 'absolute',
+        backgroundColor: appColors.primary
+    }
+};

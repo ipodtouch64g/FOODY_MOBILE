@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {View, Modal} from 'react-native';
+import {View, Modal,StyleSheet,Text} from 'react-native';
 
 import {connect} from 'react-redux';
 import {toggleSearchModal, setSearchText} from '../states/search';
 
-import {Container, Header, Button, Icon, Item, Input} from 'native-base';
+import {Container, Header, Button, Item, Input} from 'native-base';
 import appColors from '../styles/colors';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Kaede } from 'react-native-textinput-effects';
 class SearchButtonWithModal extends React.Component {
     static propTypes = {
         searchText: PropTypes.string.isRequired,
@@ -27,25 +29,15 @@ class SearchButtonWithModal extends React.Component {
     render() {
         const {searchText, modalToggle, style, iconStyle} = this.props;
         return (
-            <Button transparent style={style}>
-                <Icon name='magnify' style={iconStyle}
-                    onPress={this.handleOpenModal} />
-                <Modal animationType='none' transparent={true} visible={modalToggle}
-                    onRequestClose={() => {}}>
-                    <Container style={{backgroundColor: appColors.mask}}>
-                        <Header searchBar rounded style={styles.header}>
-                            <Item style={{backgroundColor: 'white'}}>
-                                <Icon name='magnify' />
-                                <Input autoFocus placeholder='Search'
-                                    defaultValue={searchText}
-                                    onEndEditing={this.handleSearch}/>
-                                <Icon name='close'
-                                    onPress={this.handleClear} />
-                            </Item>
-                        </Header>
-                    </Container>
-                </Modal>
-            </Button>
+                <Kaede
+                  label={<Text ><Icon name='cutlery' style={{fontSize: 20, color: 'white'}}/> &nbsp; 搜尋美食 </Text>}
+                  labelStyle={{
+                    color: 'white',
+                    backgroundColor: appColors.secondary
+                  }}
+                  inputStyle={{ color: appColors.text }}
+                  onChangeText={(text) => {this.props.dispatch(setSearchText(text))}}
+                />
         );
     }
 
@@ -68,7 +60,11 @@ const styles = {
     header: {
         backgroundColor: 'transparent',
         borderBottomWidth: 0
+    },
+    fumi:{
+        ...StyleSheet.absoluteFillObject
     }
+
 };
 
 export default connect(state => ({

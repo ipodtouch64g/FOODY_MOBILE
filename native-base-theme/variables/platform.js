@@ -142,16 +142,16 @@ export default {
 
     // Footer
   footerHeight: 55,
-  footerDefaultBg: (platform === 'ios') ? '#F8F8F8' : '#4179F7',
+  footerDefaultBg: (platform === 'ios') ? '#F8F8F8' : '#ec971f',
 
 
     // FooterTab
-  tabBarTextColor: (platform === 'ios') ? '#6b6b6b' : '#b3c7f9',
+  tabBarTextColor: (platform === 'ios') ? '#6b6b6b' : '#dddada',
   tabBarTextSize: (platform === 'ios') ? 14 : 11,
   activeTab: (platform === 'ios') ? '#007aff' : '#fff',
-  sTabBarActiveTextColor: '#007aff',
+  sTabBarActiveTextColor: '#ffffff',
   tabBarActiveTextColor: (platform === 'ios') ? '#007aff' : '#fff',
-  tabActiveBgColor: (platform === 'ios') ? '#cde1f9' : '#3F51B5',
+  tabActiveBgColor: (platform === 'ios') ? '#cde1f9' : '#ec971f',
 
     // Tab
   tabDefaultBg: (platform === 'ios') ? '#F8F8F8' : '#3F51B5',

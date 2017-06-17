@@ -1,5 +1,5 @@
 import React from 'react';
-import {BackHandler} from 'react-native';
+import {BackHandler,View} from 'react-native';
 
 import {StyleProvider} from 'native-base';
 import getTheme from '../native-base-theme/components';
@@ -11,31 +11,62 @@ import loggerMiddleware from 'redux-logger';
 import {Provider, connect} from 'react-redux';
 import {search} from './states/search';
 import {toast} from './states/toast';
+
 import {post, postForm, postItem} from './states/post-reducers';
 
-import {StackNavigator, NavigationActions, addNavigationHelpers} from 'react-navigation';
+import {TabNavigator, NavigationActions, addNavigationHelpers} from 'react-navigation';
 import TodayScreen from './components/TodayScreen';
 import PostFormScreen from './components/PostFormScreen';
 import ForecastScreen from './components/ForecastScreen';
-import Tab from './components/Tab';
-const AppNavigator = StackNavigator({
+import FoodyScreen from './components/FoodyScreen';
+import SettingScreen from './components/SettingScreen';
+const AppNavigator = TabNavigator({
 
     Today: {screen: TodayScreen},
-    Forecast: {screen: ForecastScreen},
-    PostForm: {screen: PostFormScreen}
+    Foody: {screen: FoodyScreen},
+    Setting: {screen: SettingScreen},
+
 }, {
-    headerMode: 'none'
+    headerMode: 'none',
+    tabBarPosition: 'bottom',
+    tabBarOptions: {
+        showIcon: true,
+        activeTintColor: '#fff',
+        inactiveTintColor: '#e4e4e4',
+        tabStyle: {
+          height: 48,
+        },
+        style: {
+          backgroundColor: '#6F4E37',
+        },
+        labelStyle:{
+          marginTop: 0,
+          marginBottom: 0,
+          fontSize:14
+        },
+
+        indicatorStyle:{
+          backgroundColor: '#fff',
+        },
+
+  }
+
 });
 
 class AppWithStyleAndNavigator extends React.Component {
     render() {
         return (
             <StyleProvider style={getTheme(platform)}>
-                <AppNavigator navigation={addNavigationHelpers({
-                    dispatch: this.props.dispatch,
-                    state: this.props.nav
-                })}/>
-                <Tab></Tab>
+
+
+                  <AppNavigator navigation={addNavigationHelpers({
+                      dispatch: this.props.dispatch,
+                      state: this.props.nav
+                  })}/>
+
+
+
+
             </StyleProvider>
         );
     }
