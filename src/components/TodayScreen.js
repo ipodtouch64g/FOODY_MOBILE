@@ -10,6 +10,7 @@ import {
   Animated,
   TouchableOpacity
 } from 'react-native'; // Interaction
+import {searchFoodyFromApi} from '../api/posts.js'
 import InfiniteScrollView from 'react-native-infinite-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Fab, Button, Toast} from 'native-base';
@@ -17,14 +18,18 @@ import appColors from '../styles/colors';
 import appMetrics from '../styles/metrics';
 import {getMoodIcon} from '../utilities/weather.js';
 import NavigationContainer from './NavigationContainer';
-import PostList from './PostList';
-import PostItem from './PostItem';
+import SearchList from './SearchList';
 import SearchButtonWithModal from './SearchButtonWithModal';
+import SelectCity from './SelectCity';
+import SelectFood from './SelectFood';
+import LoadingFoodyIndicator from './LoadingFoodyIndicator';
 import {connect} from 'react-redux';
+import {searchFoody} from '../states/search';
 import {selectMood} from '../states/post-actions';
 import {setToast} from '../states/toast';
 import Interactable from 'react-native-interactable'; //Up intersex
 const Screen = Dimensions.get('window'); //Up intersex
+
 class TodayScreen extends React.Component {
   static propTypes = {
     creatingPost: PropTypes.bool.isRequired,
@@ -44,13 +49,42 @@ class TodayScreen extends React.Component {
     super(props);
     this._deltaY = new Animated.Value(0);
     this.state = {
+      lat:0,
+      lng:0,
       fabActive: false
     };
-
+    this.color = this._deltaY.interpolate({
+        inputRange: [-50, 0],
+        outputRange: ['#fff', appColors.secondaryLight],
+        extrapolateRight: 'clamp'
+    });
     this.handleFabClose = this.handleFabClose.bind(this);
     this.handleCreatePost = this.handleCreatePost.bind(this);
   }
+  componentWillUnmount(){
+    if(this.watchID)
+      navigator.geolocation.clearWatch(this.watchID);
+  }
+  componentDidMount(){
 
+    this.watchID=navigator.geolocation.getCurrentPosition(
+      (position) => {
+        let region={
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta:  0.0200,
+          longitudeDelta: 0.0075
+        }
+        this.setState({ lat:region.latitude,lng:region.longitude,canStartSearchFoody:true},()=>{
+          console.log(this.state.lat,this.state.lng);
+          this.props.dispatch(searchFoody(this.state.lat,this.state.lng));
+        });
+      },
+      (error) => {
+        console.log(error)
+      },
+      {enableHighAccuracy:true, timeout: 20000, maximumAge: 1000 });
+  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.toast) {
       Toast.show({text: nextProps.toast, position: 'bottom', duration: appMetrics.toastDuration})
@@ -61,69 +95,48 @@ class TodayScreen extends React.Component {
   render() {
     const {navigate} = this.props.navigation;
 
+
+
     return (
 
         <View style={styles.container}>
-          <SearchButtonWithModal/>
+        <SearchButtonWithModal _deltaY={this._deltaY}/>
        <Animated.View style={[styles.filterContainer, {
          transform: [{
            translateY: this._deltaY.interpolate({
-             inputRange: [-130, -50],
+             inputRange: [-130, -60],
              outputRange: [-33, 0],
              extrapolateRight: 'clamp'
            })
          }]
-       }]}>
-
-         {/* <TouchableOpacity onPress={() => alert('Anywhere pressed')}>
-           <View style={styles.filterField}>
-             <Text style={styles.filterFieldText}>Anywhere</Text>
-           </View>
-         </TouchableOpacity> */}
+       },{backgroundColor:this.color}]}>
 
 
-         <TouchableOpacity onPress={() => alert('Anytime pressed')}>
-           <Animated.View style={[styles.filterField, {
-             opacity: this._deltaY.interpolate({
-               inputRange: [-70, -50],
-               outputRange: [0, 1],
-               extrapolateLeft: 'clamp',
-               extrapolateRight: 'clamp'
-             })
-           }]}>
-             <Text style={styles.filterFieldText}>Anytime</Text>
-           </Animated.View>
-         </TouchableOpacity>
-         <TouchableOpacity onPress={() => alert('Anything pressed')}>
-           <Animated.View style={[styles.filterField, {
-             opacity: this._deltaY.interpolate({
-               inputRange: [-20, 0],
-               outputRange: [0, 1],
-               extrapolateLeft: 'clamp',
-               extrapolateRight: 'clamp'
-             })
-           }]}>
-             <Text style={styles.filterFieldText}>Anything</Text>
-           </Animated.View>
-         </TouchableOpacity>
+         <Animated.View style={[styles.filterField, {
+           opacity: this._deltaY.interpolate({
+             inputRange: [-70, -50],
+             outputRange: [0, 1],
+             extrapolateLeft: 'clamp',
+             extrapolateRight: 'clamp'
+           })
+         }]}>
+           <View style={[styles.filterFieldText]}><SelectCity/></View>
+          <View style={[styles.filterFieldText]}><SelectFood/></View>
+
+         </Animated.View>
+
+
        </Animated.View>
 
        <Interactable.View
          verticalOnly={true}
-         snapPoints={[{y: 0}, {y: -92}]}
-         boundaries={{top: -200}}
+         snapPoints={[{y: 0}, {y: -80}]}
          style={{flex:1}}
          animatedValueY={this._deltaY}>
-         <View style={styles.content}>
-           <Text style={styles.panelTitle}>San Francisco Airport</Text>
-           <Text style={styles.panelSubtitle}>International Airport - 40 miles away</Text>
-           <View style={styles.panelButton}>
-             <Text style={styles.panelButtonTitle}>Directions</Text>
-           </View>
-           <View style={styles.panelButton}>
-             <Text style={styles.panelButtonTitle}>Search Nearby</Text>
-           </View>
-         </View>
+          {this.props.restaurants.length>0?<SearchList/>:<LoadingFoodyIndicator/>}
+
+
+
        </Interactable.View>
 
      </View>
@@ -144,6 +157,15 @@ class TodayScreen extends React.Component {
   }
 }
 const styles = StyleSheet.create({
+  listitem:{
+    borderBottomWidth:0,
+  },
+  listitemtitle:{
+    borderBottomWidth:0,
+    flex:1,
+
+  },
+
   container: {
     flex: 1,
     alignItems: 'stretch',
@@ -151,7 +173,7 @@ const styles = StyleSheet.create({
 
   },
   filterContainer: {
-    backgroundColor: appColors.secondary,
+    backgroundColor: "white",
 
   },
   filterTop: {
@@ -163,24 +185,21 @@ const styles = StyleSheet.create({
     height: 26
   },
   filterField: {
-    height: 36,
-    backgroundColor: '#3a969a',
-    marginHorizontal: 10,
-    marginBottom: 10,
-    borderRadius: 4,
-    justifyContent: 'center'
+
+    height: 40,
+    // backgroundColor: color,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
   },
   filterFieldText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
-    marginLeft: 30,
+
+
+
+    marginVertical: 5
 
   },
   content: {
-    padding: 20,
-    backgroundColor: 'white',
-      flex:1
+    zIndex:1000,
   },
   panelTitle: {
     fontSize: 27,
@@ -234,4 +253,4 @@ const styles = StyleSheet.create({
 //
 // };
 
-export default connect((state, ownProps) => ({creatingPost: state.post.creatingPost, creatingVote: state.post.creatingVote, toast: state.toast, searchText: state.search.searchText}))(TodayScreen);
+export default connect((state, ownProps) => ({restaurants:state.search.restaurants,searchFood:state.search.searchFood,searchCity:state.search.searchCity,creatingPost: state.post.creatingPost, creatingVote: state.post.creatingVote, toast: state.toast, searchText: state.search.searchText}))(TodayScreen);

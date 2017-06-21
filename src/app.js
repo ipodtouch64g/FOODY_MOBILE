@@ -31,13 +31,15 @@ const AppNavigator = TabNavigator({
     tabBarPosition: 'bottom',
     tabBarOptions: {
         showIcon: true,
-        activeTintColor: '#fff',
-        inactiveTintColor: '#e4e4e4',
+        activeTintColor: appColors.primary,
+        inactiveTintColor: appColors.text,
         tabStyle: {
           height: 48,
         },
         style: {
-          backgroundColor: '#6F4E37',
+          backgroundColor: 'white',
+          borderTopWidth: 0.2,
+          borderTopColor: appColors.text
         },
         labelStyle:{
           marginTop: 0,
@@ -46,7 +48,7 @@ const AppNavigator = TabNavigator({
         },
 
         indicatorStyle:{
-          backgroundColor: '#fff',
+          backgroundColor: appColors.primary,
         },
 
   }

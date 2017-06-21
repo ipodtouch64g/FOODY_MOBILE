@@ -12,11 +12,11 @@ export default (variables = variable) => {
         shadowRadius: null,
         elevation: null,
       },
-      marginVertical: 5,
+      paddingBottom: 2,
       marginHorizontal: 2,
       flex: 1,
       borderWidth: variables.borderWidth,
-      borderRadius: 2,
+    
       borderColor: variables.cardBorderColor,
       flexWrap: 'wrap',
       backgroundColor: variables.cardDefaultBg,
