@@ -115,3 +115,50 @@ export function searchListFromApi(searchText = '',place = '',category = '', pric
         return res.data;
     });
 }
+
+export function listCommentsFromApi(r_id = 0) {
+    let url = `${postBaseUrl_foody}/posts`;
+    let query;
+    query =`r_id=${r_id}`;
+    url += '?' + query;
+
+    console.log(`Making GET request to: ${url}`);
+    return fetch(url, {
+          headers: {
+              'Accept': 'application/json'
+          }
+      }).then(function(res) {
+        if (res.status !== 200)
+            throw new Error(`Unexpected response code: ${res.status}`);
+        console.log(res);
+        return res.json();
+    });
+
+}
+
+export function createCommentsFromApi(text,id,u_id="訪客",img='-1') {
+    let url = `${postBaseUrl_foody}/posts`;
+
+    console.log(`Making POST request to: ${url}`);
+    console.log("UID?",u_id,"IMG?",img);
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          id,
+          u_id,
+          img
+        })
+    }).then(function(res) {
+        if (res.status !== 200)
+            throw new Error(`Unexpected response code: ${res.status}`);
+
+        return res.json();
+    });
+
+}

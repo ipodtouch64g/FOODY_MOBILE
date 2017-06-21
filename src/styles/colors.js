@@ -11,7 +11,7 @@ export default appColors = {
     secondaryLight: '#ffb6bd',
     secondaryLightBorder: '#faf2cc',
     secondaryLightText: '#8a6d3b',
-    text: 'rgb(79, 62, 47)',
-    textLight: '#ebebeb',
+    text: '#4f3e2f',
+    textLight: '#7d6856',
     mask: 'rgba(0, 0, 0, 0.5)'
 };
