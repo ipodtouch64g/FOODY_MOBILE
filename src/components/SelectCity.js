@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Text, Modal, View, StyleSheet} from 'react-native';
 
 import {connect} from 'react-redux';
-import {toggleSearchModal, setSearchText, setSearchCity} from '../states/search';
+import {searchRestaurant, setSearchCity} from '../states/search';
 
 import {
   Content,
@@ -22,7 +22,6 @@ const Dimensions = require('Dimensions');
 class SelectCity extends React.Component {
   static propTypes = {
     searchText: PropTypes.string.isRequired,
-    modalToggle: PropTypes.bool.isRequired,
     style: PropTypes.object,
     dispatch: PropTypes.func.isRequired
   };
@@ -38,7 +37,7 @@ class SelectCity extends React.Component {
   }
 
   render() {
-    const {searchCity, searchText, modalToggle, style, iconStyle} = this.props;
+    const {searchCity, searchText, style, iconStyle} = this.props;
 
     return (
 
@@ -51,6 +50,7 @@ class SelectCity extends React.Component {
           <View style={styles.modalTransparent}>
             <View style={styles.topHeader}>
               <Button transparent iconLeft onPress={() => {
+                this.props.dispatch(setSearchCity(''));
                 this.setState({
                   modalOpen: !this.state.modalOpen
                 });
@@ -136,6 +136,7 @@ class SelectCity extends React.Component {
   handleSearchCity(city) {
     //this.setState({modalOpen: true});
     this.props.dispatch(setSearchCity(city));
+    this.props.dispatch(searchRestaurant(this.props.searchText,city,this.props.category));
     this.setState({modalOpen: false});
   }
 
@@ -188,4 +189,8 @@ const styles = {
   }
 };
 
-export default connect(state => ({searchCity: state.search.searchCity, searchText: state.search.searchText, modalToggle: state.search.modalToggle}))(SelectCity);
+export default connect(state => ({
+  searchCity: state.search.searchCity,
+  searchText: state.search.searchText,
+  category: state.search.category
+}))(SelectCity);

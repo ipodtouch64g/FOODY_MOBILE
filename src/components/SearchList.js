@@ -7,7 +7,7 @@ import {
 import InfiniteScrollView from 'react-native-infinite-scroll-view';
 
 import SearchItem from './SearchItem';
-
+import {listMoreRests} from '../states/search';
 import {connect} from 'react-redux';
 
 class SearchList extends React.Component {
@@ -20,7 +20,7 @@ class SearchList extends React.Component {
                 rowHasChanged: (r1, r2) => JSON.stringify(r1) !== JSON.stringify(r2)
             })
         };
-        // this.handleLoadMore = this.handleLoadMore.bind(this);
+        this.handleLoadMore = this.handleLoadMore.bind(this);
     }
 
     componentDidMount() {
@@ -42,10 +42,9 @@ class SearchList extends React.Component {
     }
 
     render() {
-        const {searchingFoody, restaurants} = this.props;
+        const {searchingFoody,hasMore,restaurants} = this.props;
         return (
             <ListView
-
                 distanceToLoadMore={300}
                 renderScrollComponent={props => <InfiniteScrollView {...props} />}
                 dataSource={this.state.dataSource}
@@ -54,35 +53,30 @@ class SearchList extends React.Component {
                 }}
                 canLoadMore={() => {
                     if (searchingFoody || !restaurants.length)
-                        return false;
+                      return false;
+                    return hasMore;
                 }}
-
+                onLoadMoreAsync={this.handleLoadMore}
                 style={{backgroundColor: '#fff'}}
             />
-
-
-
-
         );
     }
-
-    // handleRefresh() {
-    //     const {dispatch, searchText} = this.props;
-    //     dispatch(listPosts(searchText));
-    // }
-    //
-    // handleLoadMore() {
-    //     const {listingMorePosts, dispatch, posts, searchText} = this.props;
-    //     const start = posts[posts.length - 1].id;
-    //     if (listingMorePosts !== start)
-    //         dispatch(listMorePosts(searchText, start));
-    // }
+    handleLoadMore() {
+        const {listingMoreRests, dispatch, restaurants, searchText,searchCity,category} = this.props;
+        const start = restaurants[restaurants.length - 1].id;
+        if (listingMoreRests !== start){
+          console.log(listingMoreRests);
+          dispatch(listMoreRests(searchText, start,searchCity,category));
+        }
+    }
 }
 
 export default connect((state, ownProps) => ({
     searchingFoody: state.search.searchingFoody,
+    listingMoreRests: state.search.listingMoreRests,
+    hasMore: state.search.hasMore,
     searchText: state.search.searchText,
     restaurants:state.search.restaurants,
-    searchFood:state.search.searchFood,
+    category: state.search.category,
     searchCity:state.search.searchCity
 }))(SearchList);

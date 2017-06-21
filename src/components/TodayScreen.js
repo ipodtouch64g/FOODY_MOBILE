@@ -13,6 +13,7 @@ import {
 import {searchFoodyFromApi} from '../api/posts.js'
 import InfiniteScrollView from 'react-native-infinite-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { Fab, Button, Toast} from 'native-base';
 import appColors from '../styles/colors';
 import appMetrics from '../styles/metrics';
@@ -24,7 +25,7 @@ import SelectCity from './SelectCity';
 import SelectFood from './SelectFood';
 import LoadingFoodyIndicator from './LoadingFoodyIndicator';
 import {connect} from 'react-redux';
-import {searchFoody} from '../states/search';
+import {searchFoody,setSearchLatLng} from '../states/search';
 import {selectMood} from '../states/post-actions';
 import {setToast} from '../states/toast';
 import Interactable from 'react-native-interactable'; //Up intersex
@@ -49,8 +50,7 @@ class TodayScreen extends React.Component {
     super(props);
     this._deltaY = new Animated.Value(0);
     this.state = {
-      lat:0,
-      lng:0,
+      visible:false,
       fabActive: false
     };
     this.color = this._deltaY.interpolate({
@@ -65,6 +65,7 @@ class TodayScreen extends React.Component {
     if(this.watchID)
       navigator.geolocation.clearWatch(this.watchID);
   }
+
   componentDidMount(){
 
     this.watchID=navigator.geolocation.getCurrentPosition(
@@ -75,9 +76,10 @@ class TodayScreen extends React.Component {
           latitudeDelta:  0.0200,
           longitudeDelta: 0.0075
         }
-        this.setState({ lat:region.latitude,lng:region.longitude,canStartSearchFoody:true},()=>{
-          console.log(this.state.lat,this.state.lng);
-          this.props.dispatch(searchFoody(this.state.lat,this.state.lng));
+        this.props.dispatch(setSearchLatLng(region.latitude,region.longitude));
+        this.setState({canStartSearchFoody:true},()=>{
+          console.log(region.latitude,region.longitude);
+          this.props.dispatch(searchFoody(this.props.lat,this.props.lng,this.props.category));
         });
       },
       (error) => {
@@ -91,6 +93,7 @@ class TodayScreen extends React.Component {
       this.props.dispatch(setToast(''));
     }
   }
+
 
   render() {
     const {navigate} = this.props.navigation;
@@ -121,7 +124,7 @@ class TodayScreen extends React.Component {
            })
          }]}>
            <View style={[styles.filterFieldText]}><SelectCity/></View>
-          <View style={[styles.filterFieldText]}><SelectFood/></View>
+          <View style={[styles.filterFieldText]}><SelectFood /></View>
 
          </Animated.View>
 
@@ -138,7 +141,6 @@ class TodayScreen extends React.Component {
 
 
        </Interactable.View>
-
      </View>
 
     );
@@ -253,4 +255,15 @@ const styles = StyleSheet.create({
 //
 // };
 
-export default connect((state, ownProps) => ({restaurants:state.search.restaurants,searchFood:state.search.searchFood,searchCity:state.search.searchCity,creatingPost: state.post.creatingPost, creatingVote: state.post.creatingVote, toast: state.toast, searchText: state.search.searchText}))(TodayScreen);
+export default connect((state, ownProps) => ({
+  restaurants:state.search.restaurants,
+  searchFood:state.search.searchFood,
+  searchCity:state.search.searchCity,
+  creatingPost: state.post.creatingPost,
+  creatingVote: state.post.creatingVote,
+  toast: state.toast,
+  category:state.search.category,
+  searchText: state.search.searchText,
+  lat:state.search.lat,
+  lng:state.search.lng
+}))(TodayScreen);

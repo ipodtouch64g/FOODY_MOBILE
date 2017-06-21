@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {View, Modal,StyleSheet,Text,Animated,} from 'react-native';
 
 import {connect} from 'react-redux';
-import {toggleSearchModal, setSearchText} from '../states/search';
+import {searchRestaurant,setSearchText} from '../states/search';
 
 import {Container, Header, Button, Item, Input} from 'native-base';
 import appColors from '../styles/colors';
@@ -13,19 +13,15 @@ import { Kaede } from 'react-native-textinput-effects';
 class SearchButtonWithModal extends React.Component {
     static propTypes = {
         searchText: PropTypes.string.isRequired,
-        modalToggle: PropTypes.bool.isRequired,
         style: PropTypes.object,
         dispatch: PropTypes.func.isRequired
     };
 
     constructor(props) {
         super(props);
-        this.handleOpenModal = this.handleOpenModal.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
         this.handleClear = this.handleClear.bind(this);
     };
-
-
 
     render() {
         const {searchText, modalToggle, style, iconStyle} = this.props;
@@ -37,16 +33,13 @@ class SearchButtonWithModal extends React.Component {
                    extrapolateLeft: "clamp",
                })}}>
 
-
-
-
                   <Kaede
                     label={<Text ><Icon name='search' style={{fontSize: 20, color: 'white'}}/> &nbsp; 搜尋美食  </Text>}
                     labelStyle={{
                       color: '#fff',
                       backgroundColor:"rgba(255, 255, 255, 0)",
                     }}
-
+                    onEndEditing={this.handleSearch}
                     inputStyle={{ backgroundColor: appColors.secondary,color: 'white'}}
                     onChangeText={(text) => {this.props.dispatch(setSearchText(text))}}
                   />
@@ -55,18 +48,12 @@ class SearchButtonWithModal extends React.Component {
         );
     }
 
-    handleOpenModal() {
-        this.props.dispatch(toggleSearchModal());
-    }
-
     handleSearch(e) {
-        this.props.dispatch(setSearchText(e.nativeEvent.text));
-        this.props.dispatch(toggleSearchModal());
+        this.props.dispatch(searchRestaurant(e.nativeEvent.text,this.props.searchCity,this.props.category));
     }
 
     handleClear() {
         this.props.dispatch(setSearchText(''));
-        this.props.dispatch(toggleSearchModal());
     }
 }
 
@@ -83,5 +70,7 @@ const styles = {
 
 export default connect(state => ({
     searchText: state.search.searchText,
+    searchCity: state.search.searchCity,
+    category: state.search.category,
     modalToggle: state.search.modalToggle
 }))(SearchButtonWithModal);

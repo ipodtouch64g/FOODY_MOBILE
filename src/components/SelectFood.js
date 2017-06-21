@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import {connect} from 'react-redux';
-import {toggleSearchModal, setSearchText, setSearchFood,setSearchFoodAll, setSearchCity} from '../states/search';
+import {setSearchFood,setSearchFoodAll,searchFoody,searchRestaurant} from '../states/search';
 import {
   Content,
   ListItem,
@@ -30,14 +30,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
 import Collapsible from 'react-native-collapsible';
 const Dimensions = require('Dimensions');
+var initOpens=Array(12).fill(false);
 
 class SelectFood extends React.Component {
   static propTypes = {
     searchText: PropTypes.string.isRequired,
-    modalToggle: PropTypes.bool.isRequired,
     style: PropTypes.object,
     dispatch: PropTypes.func.isRequired
   };
+
 
   constructor(props) {
     super(props);
@@ -45,6 +46,7 @@ class SelectFood extends React.Component {
 
     this.state = {
       modalOpen: false,
+      subModalOpen: initOpens,
       activeSection: false,
       collapsed: [true,true],
       dataSource: ds.cloneWithRows(['row 1', 'row 2']),
@@ -53,10 +55,10 @@ class SelectFood extends React.Component {
     this.handleSearchFood = this.handleSearchFood.bind(this);
   }
   _toggleExpanded = (index) => {
-    var newcollapsed = this.state.collapsed;
-    newcollapsed[index] = !newcollapsed[index]
-    this.setState({
-      collapsed: newcollapsed
+    this.setState((prev)=>{
+      let m=prev.subModalOpen;
+      m[index]=!m[index];
+      return {subModalOpen:m};
     });
   }
 
@@ -90,7 +92,7 @@ class SelectFood extends React.Component {
     );
   }
   handleSelectAll(name,amount){
-    for(let i=0;i<amount;i++)
+    for(let i=0;i< amount;i++)
     {
       this.props.dispatch(setSearchFoodAll(name));
     }
@@ -99,6 +101,15 @@ class SelectFood extends React.Component {
     this.props.dispatch(setSearchFood(foodCat,searchFood));
     this.forceUpdate();
   };
+  handleCloseSearch=()=>{
+    if(this.props.searchText||this.props.searchCity)
+      this.props.dispatch(searchRestaurant(this.props.searchText,this.props.searchCity,this.props.category))
+    else
+      this.props.dispatch(searchFoody(this.props.lat,this.props.lng,this.props.category));
+    this.setState({
+      modalOpen: !this.state.modalOpen
+    });
+  }
 
 
   render() {
@@ -106,25 +117,16 @@ class SelectFood extends React.Component {
       searchFood,
       searchCity,
       searchText,
-      modalToggle,
       style,
       iconStyle
     } = this.props;
 
     return (
       <Container>
-        <Modal animationType={"fade"} transparent={true} visible={this.state.modalOpen} onRequestClose={() => {
-          this.setState({
-            modalOpen: !this.state.modalOpen
-          })
-        }}>
+        <Modal animationType={"fade"} transparent={true} visible={this.state.modalOpen} onRequestClose={this.handleCloseSearch}>
           <View style={styles.modalTransparent}>
             <View style={styles.topHeader}>
-              <Button transparent iconLeft onPress={() => {
-                this.setState({
-                  modalOpen: !this.state.modalOpen
-                });
-              }}>
+              <Button transparent iconLeft onPress={this.handleCloseSearch}>
                 <Icon color={'white'} size={30} name='times'/>
               </Button>
               <Text style={StyleSheet.flatten(styles.topHeaderLocation)}>想吃什麼？</Text>
@@ -133,33 +135,25 @@ class SelectFood extends React.Component {
                 <Content>
                   <List>
                     {searchFood.map((FoodCat,index) =>
-                      <ListItem button key={index} onPress={()=>{this._toggleExpanded(index)}} style={StyleSheet.flatten(styles.content)}>
+                      (<View>
+                        <ListItem button key={index} onPress={()=>{}} style={StyleSheet.flatten(styles.content)}>
                           <View style={styles.header}>
                             <View style={styles.headerTextView}>
                               <Text style={styles.headerText}>{FoodCat[0]}&nbsp;&nbsp;&nbsp;<Icon name={'angle-down'}/></Text>
                             </View>
-
                           </View>
-                        {/* <Collapsible style={styles.collapsible} collapsed={this.state.collapsed[index]} align="center">
-
-                              <List>
-                                {FoodCat.map((FoodCatIn,_index) =>{
-                                  if(_index>1)
-                                  {
-
-                                    return(
-                                    <ListItem button onPress={()=>{this.handleSelectOne(FoodCat[0],(FoodCatIn[0]))}} style={StyleSheet.flatten(styles.foodButton)}>
-                                      <Text style={StyleSheet.flatten(styles.textbtn)}>{(FoodCatIn[0])}</Text>
-                                      <Container style={StyleSheet.flatten(styles.checkbox)}><CheckBox onPress={()=>{this.handleSelectOne(FoodCat[0],(FoodCatIn[0]))}} checked={FoodCatIn[1]} /></Container>
-                                    </ListItem>
-                                    )
-                                  }
-                                }
-                                )}
-                              </List>
-
-                        </Collapsible> */}
                       </ListItem>
+                      {FoodCat.map((FoodCatIn,_index) =>{
+                        if(_index>1)
+                        {
+                          return(
+                          <ListItem button onPress={()=>{this.handleSelectOne(FoodCat[0],(FoodCatIn[0]))}} style={StyleSheet.flatten(styles.foodButton)}>
+                            <Text style={StyleSheet.flatten(styles.textbtn)}>{(FoodCatIn[0])}</Text>
+                            <Container style={StyleSheet.flatten(styles.checkbox)}><CheckBox onPress={()=>{this.handleSelectOne(FoodCat[0],(FoodCatIn[0]))}} checked={FoodCatIn[1]} /></Container>
+                          </ListItem>
+                          )
+                        }
+                      })}</View>)
                     )}
                   </List>
                 </Content>
@@ -335,4 +329,11 @@ const styles = StyleSheet.create({
 );
 
 
-export default connect(state => ({searchFood: state.search.searchFood, searchCity: state.search.searchCity, searchText: state.search.searchText, modalToggle: state.search.modalToggle}))(SelectFood);
+export default connect(state => ({
+  searchFood: state.search.searchFood,
+  searchCity: state.search.searchCity,
+  searchText: state.search.searchText,
+  category:state.search.category,
+  lat:state.search.lat,
+  lng:state.search.lng
+}))(SelectFood);
