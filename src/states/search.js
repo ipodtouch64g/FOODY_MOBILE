@@ -146,24 +146,6 @@ const food = [
   ],
   [
     "鍋類",9,["溫體牛",false],["麻辣火鍋",false],["涮涮鍋",false],["其他鍋類",false],["羊肉爐",false],["薑母鴨",false],["火烤兩吃",false],["石頭火鍋",false],["壽喜燒",false]
-  ],
-  [
-    "咖啡、簡餐、茶",4,["下午茶",false],["咖啡專賣",false],["複合式",false],["茶專賣",false]
-  ],
-  [
-    "素食",3,["小吃",false],["中式",false],["西式",false]
-  ],
-  [
-    "速食料理",3,["漢堡、炸雞",false],["披薩",false],["其他速食",false]
-  ],
-  [
-    "早餐",4,["早午餐",false],["其他類型早餐",false],["中式早餐",false],["西式早餐",false]
-  ],
-  [
-    "小吃",24,["碗粿",false],["其他小吃",false],["鹹酥雞、炸雞排",false],["筒仔米糕",false],["藥燉排骨",false],["控肉飯",false],["豬血糕",false],["鵝肉",false],["肉粽",false],["四神湯",false],["滷肉飯",false],["滷味",false],["鹹水雞",false],["胡椒餅",false],["米粉湯",false],["蚵仔煎",false],["臭豆腐",false],["水煎包、生煎包",false],["麵攤、麵店",false],["肉圓",false],["蔥油餅、蔥抓餅",false],["刈包",false],["麵線",false],["棺材板",false]
-  ],
-  [
-   "冰品、飲料、甜湯",6,["果昔",false],["果汁",false],["冰淇淋",false],["飲料專賣店",false],["剉冰、豆花",false],["甜品、甜湯",false]
   ]
 ];
 

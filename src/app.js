@@ -23,8 +23,7 @@ import SettingScreen from './components/SettingScreen';
 const AppNavigator = TabNavigator({
 
     Today: {screen: TodayScreen},
-    Foody: {screen: FoodyScreen},
-    Setting: {screen: SettingScreen},
+    Foody: {screen: FoodyScreen}
 
 }, {
     headerMode: 'none',
