@@ -3,6 +3,7 @@ import {View, Image, StyleSheet,FlatList} from 'react-native';
 import { Fab, Button, Toast, Container, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import appColors from '../styles/colors';
+import ShopModal from './ShopModal.js';
 
 import {connect} from 'react-redux';
 import {searchFoodyFromApi} from '../api/posts.js';
@@ -25,7 +26,7 @@ class FoodyScreen extends React.Component {
     static navigationOptions = {
     tabBarLabel: '食起來',
     tabBarIcon: ({ tintColor }) => (
-      <Icon name="map-marker-circle"
+      <Icon name="map-marker"
       style={{fontSize: 24,color: tintColor}}
       />
     ),
@@ -43,6 +44,8 @@ class FoodyScreen extends React.Component {
           },
           fabActive: true,
           visible: false,
+          modalVisible: false,
+          shop: null,
           markers:[],
           restaurants:[initRest],
           distance:1,
@@ -105,17 +108,28 @@ class FoodyScreen extends React.Component {
       updatePosition(this.refs['SELECT2']);
       updatePosition(this.refs['OPTIONLIST1']);
       updatePosition(this.refs['OPTIONLIST2']);
-      let region={
-        latitude: this.props.lat,
-        longitude: this.props.lng,
-        latitudeDelta:  0.0200,
-        longitudeDelta: 0.0075
-      }
-      let m=[{
-        latlng:{latitude:this.props.lat,longitude:this.props.lng},
-        title:"Here!"
-      }];
-      this.setState({ region :region,markers:m});
+      this.watchID=navigator.geolocation.getCurrentPosition(
+        (position) => {
+          let region={
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta:  0.0200,
+            longitudeDelta: 0.0075
+          }
+          let m=[{
+            latlng:{latitude:position.coords.latitude,longitude:position.coords.longitude},
+            title:"Here!"
+          }];
+          this.setState({ region :region,markers:m});
+        },
+        (error) => {
+          console.log(error)
+        },
+        {enableHighAccuracy:true, timeout: 20000, maximumAge: 1000 });
+    }
+    componentWillUnmount(){
+      if(this.watchID)
+        navigator.geolocation.clearWatch(this.watchID);
     }
 
     render() {
@@ -129,13 +143,17 @@ class FoodyScreen extends React.Component {
           >
           {this.state.markers.map((marker,index) => (
             <MapView.Marker
-              coordinate={marker.latlng}
-              title={marker.title}
-              identifier={marker.title}
-              pinColor={index===0?"green":"red"}
-            />
+                coordinate={marker.latlng}
+                title={marker.title}
+                identifier={marker.title}
+                pinColor={index===0?"green":"red"}>
+              <MapView.Callout onPress={()=>{
+                this.setState({modalVisible:true,shop:this.state.restaurants[index]});
+              }}/>
+          </MapView.Marker>
           ))}
          </MapView>
+         <ShopModal {...this.state.shop} visible={this.state.modalVisible} setVisibility={()=>{this.setState({modalVisible:false})}}/>
          <Fab
              active={this.state.fabActive}
              containerStyle={StyleSheet.flatten(styles.fabContainer)}

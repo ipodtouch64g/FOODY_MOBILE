@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {AsyncStorage,Image,View, StyleSheet, Platform,Modal ,TouchableOpacity,ScrollView} from 'react-native';
+import {Image,View, StyleSheet, Platform,Modal ,TouchableOpacity,ScrollView} from 'react-native';
 import {Button,Thumbnail,Left,ListItem,Container, Content, Card, CardItem, Text, Body } from 'native-base';
 import {connect} from 'react-redux';
 
@@ -14,102 +14,46 @@ import moment from 'moment';
 import appColors from '../styles/colors';
 import AddComment from './AddComment';
 
-class SearchItem extends React.Component {
+class ShopModal extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
           starCount: 3.5,
-          searchModalOpen:false,
           commentModalOpen:false,
           heart:false,
         };
         this.setcommentModalOpen = this.setcommentModalOpen.bind(this);
-        this.setsearchModalOpen = this.setsearchModalOpen.bind(this);
         this.setHeart = this.setHeart.bind(this);
 
     }
-    componentWillMount(){
-      const id = this.props.id.toString();
-
-      AsyncStorage.getItem(id,(err, result) =>{
-        console.log(result);
-        if(result && result !== 'null' && result !== 'undefined')
-        {
-          this.setState({heart:true},()=>{this.forceUpdate();console.log(this.state.heart,id)});
-        }
-
-      })
-
-
-  };
+    
 
     setHeart(){
-      console.log(this.props);
-      const id = this.props.id.toString();
       this.setState({heart:!this.state.heart});
-      console.log(id);
-      AsyncStorage.getItem(id,(err, result) =>{
-        console.log(result);
-        if(result && result !== 'null' && result !== 'undefined')
-        {
-          AsyncStorage.removeItem(id,()=>{
-            AsyncStorage.getAllKeys((err,keys)=>{
-              console.log(keys);
-
-            });
-          });
-        }
-        else
-        {
-          AsyncStorage.setItem(id,JSON.stringify(this.props),()=>{
-            AsyncStorage.getAllKeys((err,keys)=>{
-              console.log(keys);
-
-            });
-          });
-        }
-      }
-    );
-
-
     }
-
-
     onStarRatingPress(rating) {
      this.setState({
        starCount: rating
      });
     }
-
-    setsearchModalOpen() {
-   this.setState({searchModalOpen: !this.state.searchModalOpen},()=>{
-     console.log('search modal open!!');
-   });
- }
  setcommentModalOpen() {
 this.setState({commentModalOpen: !this.state.commentModalOpen},()=>{
   console.log('comment modal open!!');
 });
 }
 
-
-
     render() {
         return (
-              <TouchableOpacity onPress={()=>{this.setsearchModalOpen()}}>
-
                 <Modal
                   animationType={"slide"}
                   transparent={false}
-                  visible={this.state.searchModalOpen}
-                  onRequestClose={() => {this.setsearchModalOpen()}}
-                >
-
+                  visible={this.props.visible}
+                  onRequestClose={() => {this.props.setVisibility()}}>
                      <ScrollView>
                        <View style={styles.modalHeader}>
-                         <Image source={{resize:'cover',height:250,uri: this.props.image}}>
-                           <TouchableOpacity onPress={()=>{this.setsearchModalOpen()}}>
+                          <Image style={{resize:'cover',height:250}} source={this.props.image}>
+                           <TouchableOpacity onPress={()=>{this.props.setVisibility()}}>
 
                              <Ionicon style={{paddingLeft:18,fontSize:50,color:'rgb(255, 255, 255)'}} name="ios-close"/>
                            </TouchableOpacity>
@@ -165,61 +109,10 @@ this.setState({commentModalOpen: !this.state.commentModalOpen},()=>{
                               <AddComment {...this.props} setcommentModalOpen={this.setcommentModalOpen}/>
                            </Modal>
                        </View>
-
                      </ScrollView>
-
-
                 </Modal>
-                <Card>
-                  <CardItem>
-                    <Left>
-                      <Thumbnail square size={80} source={{uri: this.props.image}} />
-                            <Body style={{flexDirection:'row'}}>
-                              <View style={{flex:0.7}}>
-                                <Text>{this.props.name}</Text>
-                                <Text note><Icon name={"map-marker"}></Icon>&nbsp;{this.props.address}</Text>
-                              </View>
-                              <View style={{flex:0.3}}>
-                                {(this.state.heart)&&<Icon style={styles.heart} name={"heart"}/>}
-                              </View>
-                            </Body>
-                    </Left>
-                  </CardItem>
-                  <CardItem >
-                    <Body style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>
-                      <StarRating
-                        starSize={20}
-                        disabled={true}
-                        maxStars={5}
-                        emptyStar={'ios-star-outline'}
-                        fullStar={'ios-star'}
-                        halfStar={'ios-star-half'}
-                        iconSet={'Ionicons'}
-                        rating={this.state.starCount}
-                        selectedStar={(rating) => this.onStarRatingPress(rating)}
-                        starColor={'orange'}
-                      />
-                      <Text note style={{fontSize:12,paddingTop:8,alignSelf:'flex-end'}}>$&nbsp;{this.props.average}</Text>
-                      <Text note style={{fontSize:12,paddingTop:8,alignSelf:'flex-end'}}><Icon name={"hashtag"}></Icon>&nbsp;{this.props.category}</Text>
-                    </Body>
-                  </CardItem>
-                </Card>
-              </TouchableOpacity>
-
         );
     }
-
-    // handleTooltipToggle() {
-    //     this.props.dispatch(toggleTooltip(this.props.id));
-    // }
-    //
-    // handleVote(vote) {
-    //     const {dispatch, id} = this.props;
-    //     dispatch(createVote(id, vote)).then(() => {
-    //         dispatch(setToast('Voted.'));
-    //     });
-    //     dispatch(setTooltipToggle(id, false));
-    // }
 }
 
 /*
@@ -307,4 +200,4 @@ const styles ={
 
 export default connect((state, ownProps) => ({
     tooltipOpen: state.postItem.tooltipOpen[ownProps.id] ? true : false
-}))(SearchItem);
+}))(ShopModal);
